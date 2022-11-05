@@ -15,6 +15,8 @@ public class SQLParser {
 	
 	public static void main(String[] args) throws Exception {
 		
+		String outputFile = "c:/users/davisst5/desktop/sqloutput051122.txt";
+		
 		setFilePathDatabase("c:/users/davisst5/desktop/exportmongo/", "gscrm");
 		
 		// basic sql query we want to be able to parse:
@@ -40,7 +42,7 @@ public class SQLParser {
 //		String test = "SELECT passNumber, analyses FROM animal WHERE passNumber=870027408083";
 //		String test = "SELECT a.passNumber, a.products[0].productCode, a.tags FROM animal a WHERE a.passNumber=870027408083";
 //		String test = "SELECT a.passNumber, a.analyses.genotypeSet FROM animal a WHERE a.passNumber=870027408083";
-		String test = "SELECT a.passNumber, a.analyses.genotypeSet, g.sample_call_rate FROM animal a WHERE a.passNumber=870027408083 JOIN genotypeResultSet g ON g._id=id(a.analyses.genotypeSet)";
+		String test = "SELECT a.passNumber, a.analyses.genotypeSet, a.analyses.*, g.sample_call_rate FROM animal a WHERE a.passNumber=870027408083 JOIN genotypeResultSet g ON g._id=id(a.analyses.genotypeSet)";
 		
 		
 		
@@ -48,9 +50,11 @@ public class SQLParser {
 		
 		System.out.println(test);
 		
-		HashMap<String, ArrayList<String>> mostlyParsed = SQLScriptParsing.runSQLParse(test);
+		HashMap<String, ArrayList<String>> parsed = SQLScriptParsing.runSQLParse(test);
 		
-		initialQuery(mostlyParsed);
+		ArrayList<HashMap<String,String>> dataRows = initialQuery(parsed);
+		
+		STJSONResultsHandler.printResultToFile(outputFile, dataRows, parsed.get("requestedFields"));
 		
 		
 	}
@@ -115,7 +119,7 @@ public class SQLParser {
 		response = individualQuery(whereRequests, alias, currentDatabase, queryCollection, new HashMap<String, String>());
 		
 		// STJSON to Array of hashmaps for relevant query fields in response.
-		STJSONResultsHandler.extractFieldsFromResults(response, requestedFields, alias, resultsPerRow);
+		STJSONResultsHandler.extractFieldsFromResults(response, requestedFields, alias, resultsPerRow, new HashMap<String, String>());
 		
 		
 		
@@ -135,17 +139,24 @@ public class SQLParser {
 		
 		
 		
+		ArrayList<HashMap<String,String>> rowsAtStart = new ArrayList<HashMap<String,String>> (resultsPerRow);
+		ArrayList<HashMap<String,String>> rowsAtEnd = new ArrayList<HashMap<String,String>> ();
 		
 		
-		for (HashMap<String,String> values: resultsPerRow) {
-
-			// this keeps everything together:
-			HashMap<String, String> currentValues = new HashMap<String, String>();
-			currentValues.putAll(values);
+		// for every alias:
+		
+		for (String joinAlias:joinAliases) {
 			
 			
+			rowsAtEnd = new ArrayList<HashMap<String,String>> ();
+			
+			
+			for (HashMap<String,String> values: rowsAtStart) {
+				
 
-			for (String joinAlias:joinAliases) {
+				// this keeps everything together:
+				HashMap<String, String> currentValues = new HashMap<String, String>();
+				currentValues.putAll(values);
 
 				ArrayList<String> criteria = aliasToRequest.get(joinAlias);
 				String joinTable = aliasToTable.get(joinAlias);
@@ -156,29 +167,27 @@ public class SQLParser {
 				
 				ArrayList<HashMap<String, String>> parsedResultsFromResponse = new ArrayList<HashMap<String,String>>();
 				
-				STJSONResultsHandler.extractFieldsFromResults(joinResponse, requestedFields, joinAlias, parsedResultsFromResponse);
+				STJSONResultsHandler.extractFieldsFromResults(joinResponse, requestedFields, joinAlias, parsedResultsFromResponse, currentValues);
 				
 				
 				// TODO  need to parse and merge this into the existing queries somehow.
 				// So for example, we have the results from Query 1, need to multiply response rows for Query 2, etc.
 				
+				rowsAtEnd.addAll(parsedResultsFromResponse);
 				
 				System.out.println(parsedResultsFromResponse);
 
 			}
+			
+			rowsAtStart = rowsAtEnd;
 
 		}
-		
-		
-		
-		
-		
 		
 		
 //		System.out.println(response);
 //		System.out.println(response.size());
 		
-		return resultsPerRow;
+		return rowsAtEnd;
 		
 	}
 

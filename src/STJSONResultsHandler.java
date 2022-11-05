@@ -1,5 +1,8 @@
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.TreeSet;
 
 import StringTypedJSON.STJSON;
 
@@ -19,7 +22,8 @@ public class STJSONResultsHandler {
 	 */
 	
 	public static void extractFieldsFromResults(ArrayList<STJSON> response, ArrayList<String> requestedFields,
-												String alias, ArrayList<HashMap<String, String>> resultsPerRow) {
+												String alias, ArrayList<HashMap<String, String>> resultsPerRow,
+												HashMap<String, String> originalValues) {
 		
 		// over all rows in response:
 		
@@ -28,6 +32,8 @@ public class STJSONResultsHandler {
 			// values in a single row:
 			
 			HashMap<String, String> valuesForRow = new HashMap<String, String>();
+			
+			valuesForRow.putAll(originalValues);
 			
 			
 			
@@ -76,9 +82,39 @@ public class STJSONResultsHandler {
 						// last node - return the last string value at position:
 						
 						
-						// check in stringFields
 						
-						if (currentNode.stringFields.containsKey(searchPart)) {
+						if ("*".equals(searchPart)) {
+							
+							String newLabel = "" + alias;
+							
+							for (int relabelPos = 0; relabelPos < pos; relabelPos++) {
+								if (relabelPos>0) {
+									newLabel = newLabel + ".";
+								}
+								newLabel = newLabel + objectNameSplit[relabelPos];
+							}
+							newLabel = newLabel + ".";
+							
+							for (String stringDataKey:currentNode.stringFields.keySet()) {
+								valuesForRow.put(newLabel + stringDataKey, currentNode.stringFields.get(stringDataKey));
+							}
+							
+							for (String stringDataKey:currentNode.stringArrayFields.keySet()) {
+								valuesForRow.put(newLabel + stringDataKey, "STRINGARRAY");
+							}
+							
+							for (String stringDataKey:currentNode.objectArrayFields.keySet()) {
+								valuesForRow.put(newLabel + stringDataKey, "OBJECTARRAY");
+							}
+							
+							for (String stringDataKey:currentNode.objectFields.keySet()) {
+								valuesForRow.put(newLabel + stringDataKey, "OBJECT");
+							}
+							
+						}
+						else if (currentNode.stringFields.containsKey(searchPart)) {
+							// check in stringFields
+							
 							detectedValue = currentNode.stringFields.get(searchPart);
 						}
 						
@@ -261,7 +297,90 @@ public class STJSONResultsHandler {
 			
 		}
 		
+	}
+	
+	
+	public static void printResultToFile(String fileName, ArrayList<HashMap<String,String>> dataRows, ArrayList<String> requests) throws Exception {
+		
+		PrintWriter out = new PrintWriter(fileName);
+		
+		
+		// Find requests which were not specifically requested.
+		
+		ArrayList<String> newParams = new ArrayList<String>();
+		
+		for (HashMap<String,String> dataForRow:dataRows) {
+			
+			for (String key:dataForRow.keySet()) {
+				if (requests.contains(key) || newParams.contains(key)) {
+					// already got.
+				}
+				else {
+					// parameter was not specifically requested:
+					newParams.add(key);
+				}
+			}
+		}
+		
+		//TODO We should be able to put these in order next to the * request parameters somehow.
+
+		// in the meantime, just sort these new parameters alphabetically.
+		Collections.sort(newParams);
+		
+		
+		// and add after 
+		ArrayList<String> allParams = new ArrayList<String>(requests);
+		allParams.addAll(newParams);
+		
+		
+		{
+			boolean nextCols = false;
+		
+			for (String key:allParams) {
+				
+				if (nextCols) {
+					out.print("\t");
+				}
+				
+				out.print(key);
+				
+				nextCols = true;
+			}
+			
+			out.println();
+		}
+		
+		
+		for (HashMap<String,String> dataForRow:dataRows) {
+			
+			boolean nextCols = false;
+			
+			for (String key:allParams) {
+				
+				if (nextCols) {
+					out.print("\t");
+				}
+				
+//				if (dataForRow.containsKey(key)) {
+				
+				out.print(dataForRow.get(key));
+//				}
+				
+				nextCols = true;
+				
+			}
+			out.println();
+		}
+		
+		
+		
+		
+		
+		out.flush();
+		out.close();
 		
 	}
+	
+	
 
 }
