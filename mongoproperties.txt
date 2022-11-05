@@ -1,0 +1,1 @@
+connectionString=mongodb://user:pw@db.mongodb.net:27017/admin?authSource=admin&replicaSet=shardname&readPreference=primary&ssl=true
