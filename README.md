@@ -22,5 +22,6 @@ Generally I would use Maven but not in personal project.
 
 # Known issues:
 
-  * SELECT * broken
-  * Aliasing broken
+  * 
+
+- - - -
