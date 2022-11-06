@@ -1,0 +1,26 @@
+address	cast	5			
+address.road 0	address.road 1	address.road 2	address.city	address.zipcode	
+num 2	options	options	options	num 6	
+	Hill	Street	Boston		
+	Mill	Road	St Louis		
+	Field	Close	London		
+					
+career	cast	5			
+career.label	career.salary	career.address			
+options	num 6	random address			
+Baker					
+Farmer					
+Postal Clerk					
+Cook					
+Author					
+Journalist					
+					
+customer	cast	5			
+customer.firstname	customer.lastname	customer.phone	customer.friends	customer.career	customer.address
+options	options	num 10	random customer 3	random career	random address
+Steve	Jones				
+Dave	Wilson				
+Mary	McDuff				
+Bob	Williams				
+Sarah					
+Keith					
