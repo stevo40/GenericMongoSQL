@@ -15,9 +15,15 @@ public class SQLParser {
 	
 	public static void main(String[] args) throws Exception {
 		
-		String outputFile = "c:/users/davisst5/desktop/sqloutput051122.txt";
+		String outputFile = "sqloutput061122.txt";
 		
-		setFilePathDatabase("c:/users/davisst5/desktop/exportmongo/", "gscrm");
+		setFilePathDatabase("", "testDatabase");
+		
+//		String test = "SELECT road, city, zipcode FROM addresses";
+		String test = "SELECT label,salary,address FROM careers";
+//		String test = "SELECT firstname, lastname, phone, friends, career, addresses, applications FROM customers";
+		
+
 		
 		// basic sql query we want to be able to parse:
 //		String test = "SELECT a,b FROM Collection c JOIN Alphabet A ON c.j = C.j JOIN Alphabet A ON c.j = C.j WHERE a = 0";
@@ -42,7 +48,7 @@ public class SQLParser {
 //		String test = "SELECT passNumber, analyses FROM animal WHERE passNumber=870027408083";
 //		String test = "SELECT a.passNumber, a.products[0].productCode, a.tags FROM animal a WHERE a.passNumber=870027408083";
 //		String test = "SELECT a.passNumber, a.analyses.genotypeSet FROM animal a WHERE a.passNumber=870027408083";
-		String test = "SELECT a.passNumber, a.analyses.genotypeSet, a.analyses.*, g.sample_call_rate FROM animal a WHERE a.passNumber=870027408083 JOIN genotypeResultSet g ON g._id=id(a.analyses.genotypeSet)";
+//		String test = "SELECT a.passNumber, a.analyses.genotypeSet, a.analyses.*, g.sample_call_rate FROM animal a WHERE a.passNumber=870027408083 JOIN genotypeResultSet g ON g._id=id(a.analyses.genotypeSet)";
 		
 		
 		

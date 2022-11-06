@@ -93,7 +93,10 @@ public class STJSONResultsHandler {
 								}
 								newLabel = newLabel + objectNameSplit[relabelPos];
 							}
-							newLabel = newLabel + ".";
+							
+							if (!"".equals(newLabel)) {
+								newLabel = newLabel + ".";
+							}
 							
 							for (String stringDataKey:currentNode.stringFields.keySet()) {
 								valuesForRow.put(newLabel + stringDataKey, currentNode.stringFields.get(stringDataKey));

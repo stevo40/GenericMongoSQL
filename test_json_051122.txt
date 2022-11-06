@@ -1,26 +1,36 @@
-address	cast	5			
-address.road 0	address.road 1	address.road 2	address.city	address.zipcode	
-num 2	options	options	options	num 6	
-	Hill	Street	Boston		
-	Mill	Road	St Louis		
-	Field	Close	London		
-					
-career	cast	5			
-career.label	career.salary	career.address			
-options	num 6	random address			
-Baker					
-Farmer					
-Postal Clerk					
-Cook					
-Author					
-Journalist					
-					
-customer	cast	5			
-customer.firstname	customer.lastname	customer.phone	customer.friends	customer.career	customer.address
-options	options	num 10	random customer 3	random career	random address
-Steve	Jones				
-Dave	Wilson				
-Mary	McDuff				
-Bob	Williams				
-Sarah					
-Keith					
+addresses	save	5				
+road 0	road 1	road 2	city	zipcode		
+num 2	options	options	options	num 6		
+	Hill	Street	Boston			
+	Mill	Road	St Louis			
+	First	Close	London			
+	Field	Avenue	New York			
+						
+careers	save	5				
+label	salary	address				
+options	num 5	link addresses				
+Baker						
+Farmer						
+Postal Clerk						
+Cook						
+Author						
+Journalist						
+						
+applications	generate	20				
+company	interview	location	career			
+Tesco	TRUE	San Francisco	link careers			
+Microsoft	FALSE	New York				
+Council		Cambridge				
+McDonalds		Leeds				
+Apple		Manchester				
+GMC						
+						
+customers	save	5				
+firstname	lastname	phone	friends	career	addresses	applications
+options	options	num 10	num 1	link careers	link addresses 2	use applications 2
+Steve	Jones					
+Dave	Wilson					
+Mary	McDuff					
+Bob	Williams					
+Sarah						
+Keith						
