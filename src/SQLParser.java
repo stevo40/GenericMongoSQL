@@ -20,9 +20,12 @@ public class SQLParser {
 		setFilePathDatabase("", "testDatabase");
 		
 //		String test = "SELECT road, city, zipcode FROM addresses";
-		String test = "SELECT label,salary,address FROM careers";
+//		String test = "SELECT label, salary, address FROM careers";
+//		String test = "SELECT * FROM careers";
+//		String test = "SELECT c.* FROM careers c";
 //		String test = "SELECT firstname, lastname, phone, friends, career, addresses, applications FROM customers";
 		
+		String test = "SELECT c.*, c.addresses[0], a.* FROM customers c JOIN addresses a ON a._id=id(c.addresses[0])";
 
 		
 		// basic sql query we want to be able to parse:
@@ -148,6 +151,9 @@ public class SQLParser {
 		ArrayList<HashMap<String,String>> rowsAtStart = new ArrayList<HashMap<String,String>> (resultsPerRow);
 		ArrayList<HashMap<String,String>> rowsAtEnd = new ArrayList<HashMap<String,String>> ();
 		
+		if (joinAliases.size()==0) {
+			rowsAtEnd = rowsAtStart;
+		}
 		
 		// for every alias:
 		

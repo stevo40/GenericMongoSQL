@@ -87,16 +87,14 @@ public class STJSONResultsHandler {
 							
 							String newLabel = "" + alias;
 							
-							for (int relabelPos = 0; relabelPos < pos; relabelPos++) {
-								if (relabelPos>0) {
-									newLabel = newLabel + ".";
-								}
-								newLabel = newLabel + objectNameSplit[relabelPos];
-							}
-							
-							if (!"".equals(newLabel)) {
+							if (!"".equals(newLabel) && !newLabel.endsWith(".")) {
 								newLabel = newLabel + ".";
 							}
+							
+							for (int relabelPos = 0; relabelPos < pos; relabelPos++) {
+								newLabel = newLabel + objectNameSplit[relabelPos] + ".";
+							}
+							
 							
 							for (String stringDataKey:currentNode.stringFields.keySet()) {
 								valuesForRow.put(newLabel + stringDataKey, currentNode.stringFields.get(stringDataKey));
@@ -334,6 +332,12 @@ public class STJSONResultsHandler {
 		// and add after 
 		ArrayList<String> allParams = new ArrayList<String>(requests);
 		allParams.addAll(newParams);
+		
+		for (String param:new ArrayList<String>(allParams)){
+			if (param.endsWith("*")) {
+				allParams.remove(param);
+			}
+		}
 		
 		
 		{
